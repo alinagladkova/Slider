@@ -2,20 +2,20 @@
 
 const feedback = [
   {
-    avatar: "",
+    avatar: "92.png",
     name: "Anna Johnson",
     position: "Web designer",
     feedback:
       "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Distinctio corporis culpa magni expedita reiciendis odio omnis totam nesciunt blanditiis incidunt? Nobis delectus exercitationem sequi quos!",
   },
   {
-    avatar: "",
+    avatar: "87.png",
     name: "Jack Jackovich",
     position: "Web designer",
     feedback: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Distinctio corporis culpa magni expedita reiciendis.",
   },
   {
-    avatar: "",
+    avatar: "32.png",
     name: "Ivan Ivanovich",
     position: "DevOps",
     feedback:
@@ -33,6 +33,10 @@ class Slider {
   _element = null;
   _subElements = {};
 
+  _state = {
+    targetSlide: 0,
+  };
+
   constructor(feedback, SliderItem) {
     this._feedback = feedback;
     this._SliderItem = SliderItem;
@@ -42,28 +46,66 @@ class Slider {
   _init() {
     this._element = createElement(this._getTemplate());
     this._subElements = this._getSubElements();
+    this._addListeners();
     this._render();
   }
 
+  _addListeners() {
+    this._subElements.btnPrev.addEventListener("click", this._clickPrev.bind(this));
+    this._subElements.btnNext.addEventListener("click", this._clickNext.bind(this));
+  }
+
+  _isNext() {
+    return this._generateSlides().length > this._state.targetSlide + 1;
+  }
+
+  _isPrev() {
+    return this._state.targetSlide > 0;
+  }
+
+  _clickPrev() {
+    if (this._isPrev()) {
+      this._state.targetSlide -= 1;
+      // this.update(this._state.targetSlide);
+    }
+  }
+
+  _clickNext() {
+    if (this._isNext()) {
+      this._state.targetSlide += 1;
+
+      // console.log(new this._SliderItem());
+      // this._update(this._state.targetSlide);
+      // this._generateSlides().map((slide) => {
+      //   console.log(slide);
+      //   slide.update(this._state.targetSlide);
+      // });
+      this._render();
+    }
+  }
+
   _generateSlides() {
-    return this._feedback.map((person) => {
-      return new this._SliderItem(person).element;
+    return this._feedback.map((person, i) => {
+      return new this._SliderItem(person, i).element;
     });
   }
 
   _render() {
     this._subElements.wrapper.innerHTML = "";
     this._subElements.wrapper.append(...this._generateSlides());
+
+    // !this._isNext() ? this._subElements.btnNext.setAttribute("disabled", true) : this._subElements.btnNext.removeAttribute("disabled");
+    // !this._isPrev() ? this._subElements.btnPrev.setAttribute("disabled", true) : this._subElements.btnPrev.removeAttribute("disabled");
   }
 
   _getTemplate() {
     return `<div class="slider">
       <div class="slider__wrapper" data-element='wrapper'></div>
       <div class="slider__control">
-        <button class="btn slider__prev" data="btn-prev">
+        <button class="btn slider__prev" data-element="btnPrev">
           <i class="fa-solid fa-arrow-left"></i>
         </button>
-        <button class="btn slider__next" data="btn-next">
+        <button class="btn slider__next" data-element="btnNext">
           <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
@@ -88,25 +130,38 @@ class SliderItem {
   _element = null;
   _subElements = {};
 
-  constructor({ avatar, name, position, feedback }) {
+  constructor({ avatar, name, position, feedback }, targetSlide, callback) {
     this._avatar = avatar;
     this._name = name;
     this._position = position;
     this._feedback = feedback;
+    this._targetSlide = targetSlide;
+    this._callback = callback;
     this._init();
   }
 
   _init() {
     this._element = createElement(this._getTemplate());
     this._subElements = this._getSubElements();
+    this._render();
+  }
+
+  _render() {
+    this._element.style.left = `${this._targetSlide * 100}%`;
+  }
+
+  update(value) {
+    console.log(value);
+    this._element.style.transform = `translateX(${value * -100}%)`;
+    this._element.style.transitionDuration = "0.5s";
   }
 
   _getTemplate() {
-    return `<div class="slider__item" data-element="slider-item">
-          		<img src="img/2.svg.png" alt="img" class="slider__image" />
+    return `<div class="slider__item">
+          		<img src="img/${this._avatar}" alt="img" class="slider__image" />
           		<h3 class="slider__title">${this._name}</h3>
-          		<div class="slider__subtitle"></div>
-          		<p class="slider__text"></p>
+          		<div class="slider__subtitle">${this._position}</div>
+          		<p class="slider__text">${this._feedback}</p>
 						</div>`;
   }
 
