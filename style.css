@@ -5,7 +5,6 @@
 }
 
 body {
-  /* background-color: #161515; */
   background-color: rgb(139, 104, 122);
 }
 
@@ -19,11 +18,7 @@ body {
 
 .slider__wrapper {
   position: relative;
-  /* display: flex; */
   height: 90%;
-
-  /* width: 100%;
-  max-width: 700px; */
 }
 
 .slider__item {
@@ -31,6 +26,7 @@ body {
   width: 100%;
   height: 100%;
   text-align: center;
+  transition: transform 0.5s;
 }
 
 .slider__image {
@@ -41,9 +37,6 @@ body {
 
 .slider__title {
   margin: 15px 0;
-}
-
-.slider__subtitle {
 }
 
 .slider__text {
@@ -59,5 +52,14 @@ body {
 .btn {
   padding: 5px 10px;
   border: 1px solid transparent;
-  background-color: rgb(213, 213, 213);
+  border-radius: 30%;
+  background-color: rgb(234, 192, 192);
+}
+
+.slider__prev {
+  margin-right: 20px;
+}
+
+.btn:hover {
+  background-color: rgb(167, 117, 117);
 }

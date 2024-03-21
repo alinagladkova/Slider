@@ -66,27 +66,24 @@ class Slider {
   _clickPrev() {
     if (this._isPrev()) {
       this._state.targetSlide -= 1;
-      // this.update(this._state.targetSlide);
+      this._update();
     }
   }
 
   _clickNext() {
     if (this._isNext()) {
       this._state.targetSlide += 1;
-
-      // console.log(new this._SliderItem());
-      // this._update(this._state.targetSlide);
-      // this._generateSlides().map((slide) => {
-      //   console.log(slide);
-      //   slide.update(this._state.targetSlide);
-      // });
-      this._render();
+      this._update();
     }
+  }
+
+  _update() {
+    this._render();
   }
 
   _generateSlides() {
     return this._feedback.map((person, i) => {
-      return new this._SliderItem(person, i).element;
+      return new this._SliderItem(person, i, this._state.targetSlide).element;
     });
   }
 
@@ -94,8 +91,8 @@ class Slider {
     this._subElements.wrapper.innerHTML = "";
     this._subElements.wrapper.append(...this._generateSlides());
 
-    // !this._isNext() ? this._subElements.btnNext.setAttribute("disabled", true) : this._subElements.btnNext.removeAttribute("disabled");
-    // !this._isPrev() ? this._subElements.btnPrev.setAttribute("disabled", true) : this._subElements.btnPrev.removeAttribute("disabled");
+    !this._isNext() ? this._subElements.btnNext.setAttribute("disabled", true) : this._subElements.btnNext.removeAttribute("disabled");
+    !this._isPrev() ? this._subElements.btnPrev.setAttribute("disabled", true) : this._subElements.btnPrev.removeAttribute("disabled");
   }
 
   _getTemplate() {
@@ -130,13 +127,13 @@ class SliderItem {
   _element = null;
   _subElements = {};
 
-  constructor({ avatar, name, position, feedback }, targetSlide, callback) {
+  constructor({ avatar, name, position, feedback }, i, targetSlide) {
     this._avatar = avatar;
     this._name = name;
     this._position = position;
     this._feedback = feedback;
+    this._i = i;
     this._targetSlide = targetSlide;
-    this._callback = callback;
     this._init();
   }
 
@@ -147,13 +144,9 @@ class SliderItem {
   }
 
   _render() {
-    this._element.style.left = `${this._targetSlide * 100}%`;
-  }
-
-  update(value) {
-    console.log(value);
-    this._element.style.transform = `translateX(${value * -100}%)`;
-    this._element.style.transitionDuration = "0.5s";
+    this._element.style.left = `${this._i * 100}%`;
+    this._element.style.transform = `translateX(${this._targetSlide * -100}%)`;
+    // this._element.style.transitionDuration = "0.5s";
   }
 
   _getTemplate() {
